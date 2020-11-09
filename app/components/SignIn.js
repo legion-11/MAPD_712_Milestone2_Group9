@@ -15,12 +15,10 @@ function checkInput(navigation, username, password){
     .then((json)=>{
       console.log(json.validated)
       if (json.validated=="true") navigation.navigate('ViewPatients');
-      // TODO: delete else
+      // TODO: delete else!!!!!!!!!!
       else navigation.navigate('ViewPatients');
       })
     .catch((error) => console.error(error))
-
-
 }
 
 //screen for signing in

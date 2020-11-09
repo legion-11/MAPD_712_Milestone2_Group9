@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { StackActions, CommonActions  } from '@react-navigation/native';
 import {
   ScrollView,
   StyleSheet,
@@ -8,6 +9,30 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+var url = "http://127.0.0.1:3009"
+
+function save(navigation){
+  navigation.dispatch(
+  CommonActions.navigate({
+    index: 0,
+    routes: [
+      { name: 'SignIn' },
+      { name: 'ViewPatients' },
+      {
+        name: 'ViewPatient',
+        params: {
+          patient: {
+            name: "name",
+            room: "name",
+            address: "name",
+            notes: "name",
+            phone_number: "3"
+        } },
+      },
+    ],
+  })
+);
+}
 // screen for adding and editing patient
 export default function AddPatient({ navigation, route })  {
   var patient = route.params.patient
@@ -17,7 +42,7 @@ export default function AddPatient({ navigation, route })  {
   const [room, setRoom] = useState(patient.room || '');
   const [address, setAddress] = useState(patient.address || '');
   const [notes, setNotes] = useState(patient.notes || '');
-  const [phone, setPhone] = useState(patient.phone || '');
+  const [phone_number, setPhone] = useState(patient.phone || '');
 
   return (
     <View style={styles.container}>
@@ -41,7 +66,7 @@ export default function AddPatient({ navigation, route })  {
             <Text style={styles.text} >Phone number</Text>
             <TextInput
               style={styles.textinput}
-              value = {phone}
+              value = {phone_number}
               keyboardType='number-pad'
               onChangeText= {text => setPhone(text)}
             />
@@ -66,8 +91,7 @@ export default function AddPatient({ navigation, route })  {
 
         <TouchableOpacity
           style={[styles.button]}
-          onPress={() => // TODO: saving
-            navigation.goBack()}
+          onPress={() => save(navigation)}
           >
           <Text style={styles.buttonText}>Save</Text>
 

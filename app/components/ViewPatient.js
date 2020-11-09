@@ -34,7 +34,7 @@ export default function ViewPatient({ navigation, route })  {
 
             <View style={styles.inLine}>
                 <Text style={styles.firstColumn}>Phone number</Text>
-                <Text style={styles.secondColumn}>{patient.phone}</Text>
+                <Text style={styles.secondColumn}>{patient.phone_number}</Text>
             </View>
 
             <View style={styles.inLine}>

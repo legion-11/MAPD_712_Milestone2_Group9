@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+var url = "http://127.0.0.1:3009"
 
 export default function ViewPatients({ navigation })  {
   const [isLoading, setLoading] = useState(true);
@@ -17,7 +18,7 @@ export default function ViewPatients({ navigation })  {
 
   // load list of patients
   useEffect(() => { // TODO: change to oue domain
-    fetch('https://my-json-server.typicode.com/legion-11/demo/patients')
+    fetch(url + `/patients`)
       .then((response) => response.json())
       .then((json)=>setPatientsList(json))
       .catch((error) => console.error(error))
@@ -33,7 +34,7 @@ export default function ViewPatients({ navigation })  {
           <Text style={styles.buttonText}>{"  +  "}</Text>
         </TouchableOpacity>
 
-        
+
         <View style={{flexDirection:'row'}}>
           <Text style={[styles.firstColumn, styles.defaultFont]}></Text>
           <Text style={[styles.secondColumn, styles.defaultFont]}>Name</Text>
@@ -93,6 +94,16 @@ const styles = StyleSheet.create(
 );
 // Each item of the list is photo, full name, and status picture that redirect to patient's screen
 function ListItem(props){
+  let image, critical;
+  if (props.item.photo != undefined){
+    image = <Image source={{uri:props.item.photo}} style={listStyles.image} />
+  }else{
+    image = <Image source={require('../assets/person-icon.png')}
+                   style={listStyles.image} />
+  }
+  if (props.item.in_critical_condition){critical = <Image source={require('../assets/critical_condition.png')} style={listStyles.image} />}
+
+
   return (
     <TouchableOpacity
       key={props.item.id}
@@ -101,9 +112,9 @@ function ListItem(props){
         props.navigation.navigate('ViewPatient', { patient: props.item })
       }>
 
-      <Image source={{uri:props.item.photo}} style={listStyles.image} />
+      {image}
       <Text style={listStyles.text}>{props.item.name}</Text>
-      <Image source={{uri:props.item.photo}} style={listStyles.image} />
+      {critical}
 
     </TouchableOpacity>);
 }
@@ -118,7 +129,7 @@ const listStyles = StyleSheet.create(
       flex:2,
       alignSelf: 'center',
       resizeMode: "center",
-      padding: 5,
+      paddingVertical: 5,
       height: 60,
     },
     text:{

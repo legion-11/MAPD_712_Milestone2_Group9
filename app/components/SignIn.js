@@ -7,16 +7,27 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+var url = "http://127.0.0.1:3009"
 // use sha-256 and send data on server?
-function checkInput(navigation){
-  // TODO: check password
-  navigation.navigate('ViewPatients')
+function checkInput(navigation, username, password){
+  fetch(url + `/users/${username}/${password}`)
+    .then((response) => response.json())
+    .then((json)=>{
+      console.log(json.validated)
+      if (json.validated=="true") navigation.navigate('ViewPatients');
+      // TODO: delete else
+      else navigation.navigate('ViewPatients');
+      })
+    .catch((error) => console.error(error))
+
+
 }
 
 //screen for signing in
 export default function SignIn({navigation})  {
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
+  const [result, setResult] = useState();
 
   return (
     <View style={styles.container}>
@@ -37,14 +48,14 @@ export default function SignIn({navigation})  {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => checkInput(navigation)}
+          onPress={() => checkInput(navigation, username, password)}
           >
             <Text style={styles.buttonText}>Press Here</Text>
         </TouchableOpacity>
 
         <View style={styles.inLine}>
 
-            <Text style={styles.hyperlink} onPress={() => checkInput(navigation)}>
+            <Text style={styles.hyperlink} onPress={() => checkInput(navigation, username, password)}>
               Forget Password?
             </Text>
 

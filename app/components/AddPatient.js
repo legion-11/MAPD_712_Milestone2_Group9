@@ -10,16 +10,18 @@ import {
 
 var url = "http://127.0.0.1:3009"
 
-function save(navigation, name, room, address, notes, phone_number, _id){
+function save(navigation, name, room, address, notes, phone_number, _id, user_id){
+  // TODO: normal check
+  if (name.length==0) return
   let url_id = (_id != undefined) ? `/${_id}` : ''
   let method = (_id != undefined) ? `PUT` : 'POST'
   let patient = {name: name,
-              room: room,
-              address: address,
-              notes: notes,
-              phone_number: phone_number,
-              _id: _id
-              }
+                room: room,
+                address: address,
+                notes: notes,
+                phone_number: phone_number,
+                user_id: user_id
+                }
   fetch(url + `/patients${url_id}`, {
     method: method,
     headers: {
@@ -41,7 +43,7 @@ function save(navigation, name, room, address, notes, phone_number, _id){
 // screen for adding and editing patient
 export default function AddPatient({ navigation, route })  {
   var patient = route.params.patient
-  console.log("EditPatient start", patient._id)
+  console.log("EditPatient start", patient._id, 'user_id', route.params.user_id)
   //hooks for patient info
   const [name, setName] = useState(patient.name || '');
   const [room, setRoom] = useState(patient.room || '');
@@ -96,7 +98,7 @@ export default function AddPatient({ navigation, route })  {
 
         <TouchableOpacity
           style={[styles.button]}
-          onPress={() => save(navigation, name, room, address, notes, phone_number, patient._id)}
+          onPress={() => save(navigation, name, room, address, notes, phone_number, patient._id, route.params.user_id)}
           >
           <Text style={styles.buttonText}>Save</Text>
 

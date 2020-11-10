@@ -39,7 +39,8 @@ export default function SignIn({navigation})  {
             fetch(url + `/users/${username}/${password}`)
               .then((response) => response.json())
               .then((json)=>{
-                if (json.validated=="true") navigation.navigate('ViewPatients', {user_id: json._id});
+                console.log(1, json.user_id)
+                if (json.validated=="true") navigation.navigate('ViewPatients', {user_id: json.user_id});
                 else{ setErr(<Text style={styles.errText} >error</Text>) }
                 })
               .catch((error) => setErr(<Text style={styles.errText} >wrong input</Text>))

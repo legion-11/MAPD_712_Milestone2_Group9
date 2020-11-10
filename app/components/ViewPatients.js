@@ -29,7 +29,7 @@ export default function ViewPatients({ navigation, route })  {
     navigation.setOptions({
       headerRight:()=>(
         <TouchableOpacity style={styles.button}
-          onPress={() => navigation.navigate("AddPatient", { patient: '' })}
+          onPress={() => navigation.navigate("AddPatient", { patient: '', user_id: route.params.user_id})}
           >
           <Text style={styles.buttonText}>{"  +  "}</Text>
         </TouchableOpacity>
@@ -41,7 +41,6 @@ export default function ViewPatients({ navigation, route })  {
   )
   return (
     <View style={styles.container}>
-
 
         <View style={{flexDirection:'row'}}>
           <Text style={[styles.firstColumn, styles.defaultFont]}></Text>

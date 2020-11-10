@@ -15,7 +15,6 @@ export default function ViewVitals({ navigation, route })  {
   var vital = route.params.vital
   const [date, setDate] = useState(new Date(vital.date));
 
-
   return (
     <View style={styles.container}>
       <ScrollView nestedScrollEnabled = {true}>
@@ -25,9 +24,6 @@ export default function ViewVitals({ navigation, route })  {
           {date.getHours() + "-"+ date.getMinutes() + "  " +
            date.getDate() + "-"+ date.getMonth() + "-"+ date.getFullYear()}
         </Text>
-
-        <Text style={styles.text}>Measured by</Text>
-        <Text style={styles.textResults}>{vital.measured} </Text>
 
         <Text style={styles.text}>Blood Presure</Text>
         <Text style={styles.textResults}>{vital.bloodPresure + ' mm Hg'} </Text>
@@ -42,7 +38,7 @@ export default function ViewVitals({ navigation, route })  {
         <Text style={styles.textResults}>{vital.hearthRate + ' / min'} </Text>
       </ScrollView>
 
-      
+
       <View style={styles.bottom}>
         <TouchableOpacity
           style={styles.button}

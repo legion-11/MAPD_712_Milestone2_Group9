@@ -9,17 +9,16 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-
+var url = "http://127.0.0.1:3009"
 // provide information about patient, and his vitals
 export default function ViewPatient({ navigation, route })  {
-  console.log("user", route.params.user_id);
   const [isLoading, setLoading] = useState(true);
   const [VitalsList, setVitalsList] = useState([]);
   var patient = route.params.patient
-  console.log("ViewPatient", patient._id)
+
   // load list of vitals
-  useEffect(() => { // TODO: change to oue domain
-    fetch('https://my-json-server.typicode.com/legion-11/demo/vitals')
+  useEffect(() => {
+    fetch(url + `/patients/${patient._id}/records`)
       .then((response) => response.json())
       .then((json)=>setVitalsList(json))
       .catch((error) => console.error(error))
@@ -69,7 +68,7 @@ export default function ViewPatient({ navigation, route })  {
               {isLoading ? <ActivityIndicator/> : (
                   <FlatList nestedScrollEnabled = {true} style={{borderWidth: 1, borderColor: "#0005"}}
                     data={VitalsList}
-                    renderItem={({ item }) => (<ListItem item={item} navigation={navigation} patient={patient}/>)}
+                    renderItem={({ item }) => (<ListItem item={item} navigation={navigation} patient={patient} />)}
                   />
               )}
             </View>
@@ -77,7 +76,7 @@ export default function ViewPatient({ navigation, route })  {
 
         <View style={styles.bottom}>
           <TouchableOpacity style={[styles.button, styles.leftHalf, {}]}
-            onPress={() => navigation.navigate("AddPatient", { patient: patient })}
+            onPress={() => navigation.navigate("AddPatient", { patient: patient, user_id: route.params.user_id })}
             >
             <Text style={styles.buttonText}>{"Edit"}</Text>
           </TouchableOpacity>
@@ -135,6 +134,10 @@ const styles = StyleSheet.create(
 );
 
 function ListItem(props){
+  function checkVital(vital, text){
+    if (vital!='') {return <Text style={list.text}>{text}</Text>}
+  }
+  let date = new Date(props.item.date)
   return (
     <TouchableOpacity
       key={props.item.id}
@@ -143,20 +146,25 @@ function ListItem(props){
         props.navigation.navigate('ViewVitals', { vital: props.item, patient: props.patient})
       }>
       <View style={{ marginBottom:10, padding:5}}>
-          <Text style={list.text}>{props.item.date.split("T").join("\n")}</Text>
+          <Text style={list.text}>
+          {
+          date.getDate() + "-"+ date.getMonth() + "-"+ date.getFullYear() + "\n" +
+            date.getHours() + "-"+ date.getMinutes()
+          }
+          </Text>
       </View>
       <View style={{ marginBottom:10, padding:5}}>
-          <Text style={list.text}>Blood Presure</Text>
-          <Text style={list.text}>Respiratory Rate</Text>
-          <Text style={list.text}>Blood Oxigen</Text>
-          <Text style={list.text}>Hearth Rate</Text>
+      {checkVital(props.item.bloodPresure, "Blood Presure")}
+      {checkVital(props.item.respiratoryRate, "Respiratory Rate")}
+      {checkVital(props.item.bloodOxigen, "Blood Oxigen")}
+      {checkVital(props.item.hearthRate, "Hearth Rate")}
       </View>
 
       <View style={{ marginBottom:10, padding:5, flex:1}}>
-          <Text style={list.text}>{props.item.bloodPresure}</Text>
-          <Text style={list.text}>{props.item.respiratoryRate}</Text>
-          <Text style={list.text}>{props.item.bloodOxigen}</Text>
-          <Text style={list.text}>{props.item.hearthRate}</Text>
+      {checkVital(props.item.bloodPresure, props.item.bloodPresure)}
+      {checkVital(props.item.respiratoryRate, props.item.respiratoryRate)}
+      {checkVital(props.item.bloodOxigen, props.item.bloodOxigen)}
+      {checkVital(props.item.hearthRate, props.item.hearthRate)}
       </View>
 
     </TouchableOpacity>

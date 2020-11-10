@@ -9,11 +9,13 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+
+var url = "http://127.0.0.1:3009"
 // screen for adding and editing vital
 export default function AddVitals({ navigation, route })  {
   var vital = route.params.vital
+  console.log("vital", vital);
   //hooks for vitals info
-  const [name, setName] = useState(vital.measured || '');
   const [bloodPresure, setBloodPresure] = useState(vital.bloodPresure || '');
   const [respiratoryRate, setRespiratoryRate] = useState(vital.respiratoryRate || '');
   const [bloodOxigen, setBloodOxigen] = useState(vital.bloodOxigen || ''); hearthRate
@@ -76,11 +78,6 @@ export default function AddVitals({ navigation, route })  {
           />
         )}
         <View>
-            <Text style={styles.text}>Measured by</Text>
-            <TextInput style={styles.textinput}
-              value = {name}
-              onChangeText= {text => setName(text)}
-            />
 
             <Text style={styles.text}>Blood Presure</Text>
             <TextInput style={styles.textinput}
@@ -116,7 +113,37 @@ export default function AddVitals({ navigation, route })  {
         <TouchableOpacity
           style={[styles.button]}
           onPress={() => // TODO: save vitals
-            navigation.goBack()}
+          {
+            console.log(vital._id);
+            if (bloodPresure.length==0 && respiratoryRate.length==0&&bloodOxigen.length==0&&hearthRate.length==0) {
+              console.log('error');
+            }else {
+              let vital_id = (vital._id != undefined) ? `/${vital._id}` : ''
+              let method = (vital._id != undefined) ? `PUT` : 'POST'
+              let new_vital = {bloodPresure: bloodPresure,
+                            respiratoryRate: respiratoryRate,
+                            bloodOxigen: bloodOxigen,
+                            hearthRate: hearthRate,
+                            date: date
+                            }
+              fetch(url + `/patients/${route.params.patient._id}/records${vital_id}`, {
+                method: method,
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(new_vital)
+              })
+              .then((response) => response.json())
+              .then((json)=> {new_vital = json})
+              .catch((error) => console.error(error))
+              .then( () => {
+                navigation.pop()
+                navigation.navigate( "ViewVitals", { vital: new_vital, patient: route.params.patient} )
+                }
+              );
+            }
+          }}
         >
             <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>

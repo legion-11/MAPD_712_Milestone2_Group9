@@ -12,10 +12,11 @@ import {
 
 // provide information about patient, and his vitals
 export default function ViewPatient({ navigation, route })  {
+  console.log("user", route.params.user_id);
   const [isLoading, setLoading] = useState(true);
   const [VitalsList, setVitalsList] = useState([]);
   var patient = route.params.patient
-  console.log(1, patient._id)
+  console.log("ViewPatient", patient._id)
   // load list of vitals
   useEffect(() => { // TODO: change to oue domain
     fetch('https://my-json-server.typicode.com/legion-11/demo/vitals')

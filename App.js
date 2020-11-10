@@ -17,6 +17,11 @@ import ViewVitals from './app/components/ViewVitals'
 import SignUp from './app/components/SignUp'
 import AddVitals from './app/components/AddVitals'
 
+import { LogBox } from 'react-native';
+LogBox.ignoreAllLogs();//Ignore all log notifications
+
+
+
 export default App = () => {
   const Stack = createStackNavigator();
   return (

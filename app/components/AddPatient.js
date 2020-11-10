@@ -27,14 +27,21 @@ function save(navigation, name, room, address, notes, phone_number, _id){
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(patient)
-  });
-  navigation.pop()
-  navigation.navigate("ViewPatient", { patient: patient })
+  })
+  .then((response) => response.json())
+  .then((json)=> {patient = json})
+  .catch((error) => console.error(error))
+  .then( () => {
+    navigation.pop()
+    navigation.navigate( "ViewPatient", { patient: patient } )
+    }
+  );
 }
+
 // screen for adding and editing patient
 export default function AddPatient({ navigation, route })  {
   var patient = route.params.patient
-  console.log(2, patient._id)
+  console.log("EditPatient start", patient._id)
   //hooks for patient info
   const [name, setName] = useState(patient.name || '');
   const [room, setRoom] = useState(patient.room || '');

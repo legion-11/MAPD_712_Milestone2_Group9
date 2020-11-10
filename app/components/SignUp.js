@@ -7,12 +7,20 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+var url = "http://127.0.0.1:3009"
+
+function checkemail(email){
+  // TODO:
+  return true
+}
 //screen for signing up
 export default function SignIn({navigation})  {
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
   const [password2, setPassword2] = useState();
   const [email, setEmail] = useState();
+
+  const [errorText, setErrorText] = useState();
 
   return (
     <View style={styles.container}>
@@ -37,13 +45,45 @@ export default function SignIn({navigation})  {
           onChangeText= {text => setEmail(text)}
         />
 
+        {errorText}
+
         <TouchableOpacity
           style={styles.button}
-          // onPress={() => ()}
+          onPress={() =>
+            {
+              if (password==password2 && password!=undefined && password.length > 7
+              && username.length > 4 && checkemail(email) ){
+                fetch(url + `/users`, {
+                  method: "POST",
+                  headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    username: username,
+                    password: password,
+                    email: email,
+                  })
+                })
+                .then((response) => response.json())
+                .then((json)=> {
+                    navigation.pop(1)
+                    navigation.navigate( "ViewPatients", { user_id: json._id } )
+                })
+                .catch((error) => {
+                  console.error(error)
+                  setErrorText(<Text style={styles.errortext}>server error</Text>)
+                })
+              }else{
+                console.log("error");
+                setErrorText(<Text style={styles.errortext}>password error</Text>)
+              }
+
+            }
+          }
           >
             <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
-
     </View>
   );
 };
@@ -70,6 +110,12 @@ const styles = StyleSheet.create({
       textAlign: 'left',
       alignSelf: 'center',
       fontSize: 32,
+    },
+    errortext:{
+      fontFamily: "serif",
+      textAlign: 'left',
+      alignSelf: 'center',
+      fontSize: 22,
     },
     button:{
       backgroundColor: 'crimson',

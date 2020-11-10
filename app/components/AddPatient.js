@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { StackActions, CommonActions  } from '@react-navigation/native';
 import {
   ScrollView,
   StyleSheet,
@@ -11,32 +10,31 @@ import {
 
 var url = "http://127.0.0.1:3009"
 
-function save(navigation){
-  navigation.dispatch(
-  CommonActions.navigate({
-    index: 0,
-    routes: [
-      { name: 'SignIn' },
-      { name: 'ViewPatients' },
-      {
-        name: 'ViewPatient',
-        params: {
-          patient: {
-            name: "name",
-            room: "name",
-            address: "name",
-            notes: "name",
-            phone_number: "3"
-        } },
-      },
-    ],
-  })
-);
+function save(navigation, name, room, address, notes, phone_number, _id){
+  let url_id = (_id != undefined) ? `/${_id}` : ''
+  let method = (_id != undefined) ? `PUT` : 'POST'
+  let patient = {name: name,
+              room: room,
+              address: address,
+              notes: notes,
+              phone_number: phone_number,
+              _id: _id
+              }
+  fetch(url + `/patients${url_id}`, {
+    method: method,
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(patient)
+  });
+  navigation.pop()
+  navigation.navigate("ViewPatient", { patient: patient })
 }
 // screen for adding and editing patient
 export default function AddPatient({ navigation, route })  {
   var patient = route.params.patient
-
+  console.log(2, patient._id)
   //hooks for patient info
   const [name, setName] = useState(patient.name || '');
   const [room, setRoom] = useState(patient.room || '');
@@ -91,7 +89,7 @@ export default function AddPatient({ navigation, route })  {
 
         <TouchableOpacity
           style={[styles.button]}
-          onPress={() => save(navigation)}
+          onPress={() => save(navigation, name, room, address, notes, phone_number, patient._id)}
           >
           <Text style={styles.buttonText}>Save</Text>
 

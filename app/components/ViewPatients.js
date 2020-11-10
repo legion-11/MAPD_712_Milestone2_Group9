@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLa } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -25,14 +25,22 @@ export default function ViewPatients({ navigation, route })  {
       .finally(() => setLoading(false));
   }, []);
 
-  return (
-    <View style={styles.container}>
-
+  React.useLayoutEffect(()=>{
+    navigation.setOptions({
+      headerRight:()=>(
         <TouchableOpacity style={styles.button}
           onPress={() => navigation.navigate("AddPatient", { patient: '' })}
           >
           <Text style={styles.buttonText}>{"  +  "}</Text>
         </TouchableOpacity>
+      )
+    })
+  }
+
+
+  )
+  return (
+    <View style={styles.container}>
 
 
         <View style={{flexDirection:'row'}}>

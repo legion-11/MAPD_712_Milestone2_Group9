@@ -47,7 +47,9 @@ export default function SignIn({navigation})  {
           >
             <Text style={styles.buttonText}>Press Here</Text>
         </TouchableOpacity>
+
         {err}
+
         <View style={styles.inLine}>
             <Text style={styles.hyperlink} onPress={() => {
               // TODO:
@@ -114,7 +116,7 @@ const styles = StyleSheet.create(
     },
     errText:{
       fontFamily: "serif",
-      color: "white",
+      color: "black",
       alignSelf: 'center',
       fontSize: 22,
     },

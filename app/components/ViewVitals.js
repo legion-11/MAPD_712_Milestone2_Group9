@@ -14,7 +14,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 export default function ViewVitals({ navigation, route })  {
   var vital = route.params.vital
   const [date, setDate] = useState(new Date(vital.date));
-
+  console.log("view vital with id ", vital._id, " of patient ", route.params.patient._id);
   return (
     <View style={styles.container}>
       <ScrollView nestedScrollEnabled = {true}>

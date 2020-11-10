@@ -15,7 +15,7 @@ var url = "http://127.0.0.1:3009"
 export default function ViewPatients({ navigation, route })  {
   const [isLoading, setLoading] = useState(true);
   const [patientsList, setPatientsList] = useState([]);
-  console.log(route.params.user_id);
+  console.log("view all patients", );
   // load list of patients
   useEffect(() => { // TODO: change to oue domain
     fetch(url + `/patients`)

@@ -15,7 +15,7 @@ export default function ViewPatient({ navigation, route })  {
   const [isLoading, setLoading] = useState(true);
   const [VitalsList, setVitalsList] = useState([]);
   var patient = route.params.patient
-
+  console.log("view of patient with id", patient._id);
   // load list of vitals
   useEffect(() => {
     fetch(url + `/patients/${patient._id}/records`)

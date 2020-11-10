@@ -14,7 +14,7 @@ var url = "http://127.0.0.1:3009"
 // screen for adding and editing vital
 export default function AddVitals({ navigation, route })  {
   var vital = route.params.vital
-  console.log("vital", vital);
+
   //hooks for vitals info
   const [bloodPresure, setBloodPresure] = useState(vital.bloodPresure || '');
   const [respiratoryRate, setRespiratoryRate] = useState(vital.respiratoryRate || '');
@@ -114,7 +114,7 @@ export default function AddVitals({ navigation, route })  {
           style={[styles.button]}
           onPress={() => // TODO: save vitals
           {
-            console.log(vital._id);
+
             if (bloodPresure.length==0 && respiratoryRate.length==0&&bloodOxigen.length==0&&hearthRate.length==0) {
               console.log('error');
             }else {

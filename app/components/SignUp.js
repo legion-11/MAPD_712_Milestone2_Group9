@@ -23,6 +23,7 @@ export default function SignIn({navigation})  {
   const [errorText, setErrorText] = useState();
 
   return (
+
     <View style={styles.container}>
         <Text style={styles.text}>Sign Up</Text>
 
@@ -78,7 +79,6 @@ export default function SignIn({navigation})  {
                 console.log("error");
                 setErrorText(<Text style={styles.errortext}>password error</Text>)
               }
-
             }
           }
           >

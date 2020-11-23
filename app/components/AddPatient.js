@@ -34,7 +34,6 @@ function save(navigation, name, room, address, notes, phone_number, _id, user_id
   .then((json)=> {patient = json})
   .catch((error) => console.error(error))
   .then( () => {
-    navigation.pop()
     navigation.navigate( "ViewPatient", { patient: patient } )
     }
   );

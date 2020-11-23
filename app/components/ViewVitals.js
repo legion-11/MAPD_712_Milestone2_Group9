@@ -1,20 +1,43 @@
 import React, { useEffect, useState } from 'react';
+import {HeaderBackButton} from '@react-navigation/stack';
 import {
   FlatList,
   StyleSheet,
   ScrollView,
+  BackHandler,
   View,
   Text,
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 
 // provide big screen for vital
 export default function ViewVitals({ navigation, route })  {
   var vital = route.params.vital
   const [date, setDate] = useState(new Date(vital.date));
   console.log("view vital with id ", vital._id, " of patient ", route.params.patient._id);
+
+  React.useLayoutEffect(()=>{
+    navigation.setOptions({
+      headerLeft:()=>(
+        <HeaderBackButton
+            onPress={ () => {
+              navigation.navigate('ViewPatient', {patient: route.params.patient} ) } }
+        />
+      )
+    })
+  })
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        ()=>{
+          navigation.navigate('ViewPatient', {patient: route.params.patient} )
+        }
+      );
+      return () => navigation.navigate('ViewPatient', {patient: route.params.patient} );
+},[])
+
   return (
     <View style={styles.container}>
       <ScrollView nestedScrollEnabled = {true}>

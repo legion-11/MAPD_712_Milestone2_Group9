@@ -44,7 +44,7 @@ export default App = () => {
           <Stack.Screen
             name="ViewPatient"
             component={ViewPatient}
-            options={({ route }) => ({ title: route.params.patient.name })}
+            options={ ({ route }) => ({ title: route.params.patient.name }) }
           />
 
            <Stack.Screen

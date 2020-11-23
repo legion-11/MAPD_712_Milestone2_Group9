@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import {HeaderBackButton} from '@react-navigation/stack';
+
 import {
   ActivityIndicator,
   ScrollView,
@@ -9,6 +11,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
+
 var url = "http://127.0.0.1:3009"
 // provide information about patient, and his vitals
 export default function ViewPatient({ navigation, route })  {
@@ -17,13 +20,33 @@ export default function ViewPatient({ navigation, route })  {
   var patient = route.params.patient
   console.log("view of patient with id", patient._id);
   // load list of vitals
-  useEffect(() => {
+
+  const getVitals = () => {
     fetch(url + `/patients/${patient._id}/records`)
       .then((response) => response.json())
       .then((json)=>setVitalsList(json))
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
+  }
+  
+  useEffect(() => {
+      const unsubscribe = navigation.addListener('focus', () => {
+          getVitals()
+          console.log("reloaded");
+      });
   }, []);
+
+ 
+
+  React.useLayoutEffect(()=>{
+    navigation.setOptions({
+      headerLeft:()=>(
+        <HeaderBackButton
+            onPress={ () => {navigation.navigate('ViewPatients') } }
+        />
+      )
+    })
+  })
 
   return (
     <View style={styles.container}>
@@ -41,7 +64,7 @@ export default function ViewPatient({ navigation, route })  {
             <View style={styles.inLine}>
               <Text style={styles.firstColumn}>Address</Text>
             </View>
-            <View style={{maxHeight: 60}}>
+            <View style={{maxHeight: 120}}>
               <ScrollView nestedScrollEnabled = {true}>
                 <Text style={{paddingHorizontal: 10, fontSize: 18, fontFamily: "serif", textAlignVertical: 'top'}}>{patient.address}</Text>
               </ScrollView>
@@ -64,7 +87,7 @@ export default function ViewPatient({ navigation, route })  {
 
             </TouchableOpacity>
 
-            <View style={{height:"30%"}}>
+            <View style={{height:180}}>
               {isLoading ? <ActivityIndicator/> : (
                   <FlatList nestedScrollEnabled = {true} style={{borderWidth: 1, borderColor: "#0005"}}
                     data={VitalsList}
@@ -90,6 +113,7 @@ const styles = StyleSheet.create(
     container:{
       flex:1,
       paddingHorizontal: 22,
+
     },
     inLine: {
       flexDirection:'row',

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,  } from 'react';
 import {
   ScrollView,
   StyleSheet,
+  BackHandler,
   View,
   Text,
   TextInput,
@@ -138,7 +139,6 @@ export default function AddVitals({ navigation, route })  {
               .then((json)=> {new_vital = json})
               .catch((error) => console.error(error))
               .then( () => {
-                navigation.pop()
                 navigation.navigate( "ViewVitals", { vital: new_vital, patient: route.params.patient} )
                 }
               );

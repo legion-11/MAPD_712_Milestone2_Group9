@@ -48,7 +48,7 @@ export default function AddVitals({ navigation, route })  {
   return (
     <View style={styles.container}>
       <ScrollView nestedScrollEnabled = {true}>
-        <Text style={[styles.text]}>Measurements made</Text>
+        <Text style={[styles.text, { alignSelf: "center", fontSize: 28}]}>Measurements made</Text>
 
         <View style={styles.inLine}>
           <TouchableOpacity style={{flex: 1}} onPress={showTimepicker}>

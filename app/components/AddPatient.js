@@ -4,13 +4,14 @@ import {
   StyleSheet,
   View,
   Text,
+  Image,
   TextInput,
   TouchableOpacity,
 } from 'react-native';
 
 var url = "http://127.0.0.1:3009"
 
-function save(navigation, name, room, address, notes, phone_number, _id, user_id){
+function save(navigation, name, room, address, notes, phone_number, _id, user_id, state){
   // TODO: normal check
   if (name.length==0) return
   let url_id = (_id != undefined) ? `/${_id}` : ''
@@ -20,7 +21,8 @@ function save(navigation, name, room, address, notes, phone_number, _id, user_id
                 address: address,
                 notes: notes,
                 phone_number: phone_number,
-                user_id: user_id
+                user_id: user_id,
+                in_critical_condition: state
                 }
   fetch(url + `/patients${url_id}`, {
     method: method,
@@ -49,11 +51,27 @@ export default function AddPatient({ navigation, route })  {
   const [address, setAddress] = useState(patient.address || '');
   const [notes, setNotes] = useState(patient.notes || '');
   const [phone_number, setPhone] = useState(patient.phone || '');
+  const [in_critical_condition, setCriticalcondition] = useState(patient.in_critical_condition || false);
+
+
+  React.useLayoutEffect(()=>{
+    navigation.setOptions({
+      headerRight:()=>(
+        <TouchableOpacity 
+          style={{alignSelf: 'flex-end'}}
+          onPress={() => setCriticalcondition(!in_critical_condition)}
+        >
+          <Image source={in_critical_condition ? require('../assets/critical_condition.png'): require('../assets/ok_state.jpg') } style={styles.image} />
+        </TouchableOpacity>
+      )
+    })
+  })
 
   return (
     <View style={styles.container}>
         <ScrollView>
-            <Text style={styles.text} >Patient Name</Text>
+            <Text style={styles.text}>Patient Name</Text>
+
             <TextInput
               style={styles.textinput}
               value = {name}
@@ -97,7 +115,7 @@ export default function AddPatient({ navigation, route })  {
 
         <TouchableOpacity
           style={[styles.button]}
-          onPress={() => save(navigation, name, room, address, notes, phone_number, patient._id, route.params.user_id)}
+          onPress={() => save(navigation, name, room, address, notes, phone_number, patient._id, route.params.user_id, in_critical_condition)}
           >
           <Text style={styles.buttonText}>Save</Text>
 
@@ -115,8 +133,9 @@ const styles = StyleSheet.create(
     button:{
       backgroundColor: 'crimson',
       borderRadius:25,
-      padding: 6,
-      margin: 8
+      paddingVertical: 8,
+      paddingHorizontal: 6,
+      margin: 5,
     },
     text: {
       fontSize: 22,
@@ -140,6 +159,12 @@ const styles = StyleSheet.create(
       borderColor: '#0005',
       borderRadius: 10 ,
       borderWidth: 1,
+    },
+    image:{
+      resizeMode: "center",
+      paddingVertical: 5,
+      height: 60,
+      width: 60,
     },
   }
 );

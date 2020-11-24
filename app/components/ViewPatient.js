@@ -44,7 +44,7 @@ export default function ViewPatient({ navigation, route })  {
         <View 
           style={{alignSelf: 'flex-end'}}
         >
-          <Image source={patient.in_critical_condition ? require('../assets/critical_condition.png'): require('../assets/ok_state.jpg') } style={styles.image} />
+          <Image source={patient.in_critical_condition ? require('../assets/critical_condition.png'): require('../assets/ok_state.png') } style={styles.image} />
         </View>
       )
     })

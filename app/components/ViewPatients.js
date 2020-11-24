@@ -11,18 +11,6 @@ import {
 } from 'react-native';
 
 
-const compare = (a, b) => {
-  if (a.in_critical_condition && !b.in_critical_condition ||
-      a.in_critical_condition==b.in_critical_condition && a.name < b.name){
-      return -1
-  }
-  if (b.in_critical_condition && !a.in_critical_condition ||
-      a.in_critical_condition==b.in_critical_condition && a.name > b.name){
-    return 1  
-  }
-  return 0
-}
-
 var url = "http://127.0.0.1:3009"
 
 export default function ViewPatients({ navigation, route })  {
@@ -68,7 +56,17 @@ export default function ViewPatients({ navigation, route })  {
 
         {isLoading ? <ActivityIndicator/> : (
           <FlatList
-            data={patientsList.sort(compare)}
+            data={patientsList.sort(function(a,b){
+              aname = a.name.toLowerCase()
+              bname = b.name.toLowerCase()
+          
+              if(a.in_critical_condition == b.in_critical_condition){
+                  return (aname < bname) ? -1 : (aname > bname) ? 1 : 0;
+              }
+              else{
+                  return a.in_critical_condition ? -1 : 1;
+              }
+            })}
             renderItem={({ item }) => (
               <ListItem item={item} navigation={navigation} user_id = {route.params.user_id}/>
             )}
@@ -126,7 +124,7 @@ function ListItem(props){
     image = <Image source={require('../assets/person-icon.png')}
                    style={listStyles.image} />
   }
-  if (props.item.in_critical_condition){critical = <Image source={require('../assets/critical_condition.png')} style={listStyles.image} />}
+  critical = <Image source={ props.item.in_critical_condition ? require('../assets/critical_condition.png') : require('../assets/ok_state.png')} style={listStyles.image} />
 
 
   return (

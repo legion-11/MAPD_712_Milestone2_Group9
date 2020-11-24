@@ -61,7 +61,7 @@ export default function AddPatient({ navigation, route })  {
           style={{alignSelf: 'flex-end'}}
           onPress={() => setCriticalcondition(!in_critical_condition)}
         >
-          <Image source={in_critical_condition ? require('../assets/critical_condition.png'): require('../assets/ok_state.jpg') } style={styles.image} />
+          <Image source={in_critical_condition ? require('../assets/critical_condition.png'): require('../assets/ok_state.png') } style={styles.image} />
         </TouchableOpacity>
       )
     })

@@ -21,8 +21,7 @@ export default function ViewVitals({ navigation, route })  {
     navigation.setOptions({
       headerLeft:()=>(
         <HeaderBackButton
-            onPress={ () => {
-              navigation.navigate('ViewPatient', {patient: route.params.patient} ) } }
+            onPress={ () => { navigation.navigate('ViewPatient', {patient: route.params.patient}) } }
         />
       )
     })
@@ -86,7 +85,7 @@ const styles = StyleSheet.create(
       backgroundColor: 'crimson',
       borderRadius:25,
       padding: 6,
-      margin: 5
+      margin: 5,
     },
     buttonText:{
       color: "white",

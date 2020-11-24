@@ -40,10 +40,13 @@ export default function SignIn({navigation})  {
               .then((response) => response.json())
               .then((json)=>{
                 console.log("signin user with id", json.user_id)
-                if (json.validated=="true") navigation.navigate('ViewPatients', {user_id: json.user_id});
-                else{ setErr(<Text style={styles.errText} >error</Text>) }
+                if (json.validated=="true") {
+                  setErr(undefined)
+                  navigation.navigate('ViewPatients', {user_id: json.user_id});
+                } 
+                else{ setErr(<Text style={styles.errText} >user do not exist</Text>) }
                 })
-              .catch((error) => setErr(<Text style={styles.errText} >wrong input</Text>))
+              .catch((error) => setErr(<Text style={styles.errText} >{String(error.message)}</Text>))
           }}
           >
             <Text style={styles.buttonText}>Press Here</Text>

@@ -11,14 +11,17 @@ var url = "http://127.0.0.1:3009"
 
 function checkemail(email){
   // TODO:
-  return true
+  if (email==''){
+    return true
+  }
+  return false
 }
 //screen for signing up
-export default function SignIn({navigation})  {
-  const [username, setUsername] = useState();
-  const [password, setPassword] = useState();
-  const [password2, setPassword2] = useState();
-  const [email, setEmail] = useState();
+export default function SignUp({navigation})  {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [password2, setPassword2] = useState('');
+  const [email, setEmail] = useState('');
 
   const [errorText, setErrorText] = useState();
 
@@ -52,8 +55,15 @@ export default function SignIn({navigation})  {
           style={styles.button}
           onPress={() =>
             {
-              if (password==password2 && password!=undefined && password.length > 7
-              && username.length > 4 && checkemail(email) ){
+              if (username.length < 4) {
+                setErrorText(<Text style={styles.errortext}>username should be at least 4 char long</Text>);
+              } else if (password!=undefined && password.length < 6) {
+                setErrorText(<Text style={styles.errortext}>password should be at least 6 char long</Text>);
+              } else if (password!=undefined && password!=password2) {
+                setErrorText(<Text style={styles.errortext}>passwords are different</Text>);
+              } else if (checkemail(email)) {
+                setErrorText(<Text style={styles.errortext}>email error</Text>)
+              } else {
                 fetch(url + `/users`, {
                   method: "POST",
                   headers: {
@@ -68,16 +78,12 @@ export default function SignIn({navigation})  {
                 })
                 .then((response) => response.json())
                 .then((json)=> {
-                    navigation.pop(1)
-                    navigation.navigate( "ViewPatients", { user_id: json._id } )
+                  setErrorText(undefined)
+                    navigation.navigate( "SignIn")
                 })
-                .catch((error) => {
-                  console.error(error)
-                  setErrorText(<Text style={styles.errortext}>server error</Text>)
+                .catch(() => {
+                  setErrorText(<Text style={styles.errortext}>{error.message}</Text>)
                 })
-              }else{
-                console.log("error");
-                setErrorText(<Text style={styles.errortext}>password error</Text>)
               }
             }
           }

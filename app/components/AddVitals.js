@@ -51,21 +51,29 @@ export default function AddVitals({ navigation, route })  {
         <Text style={[styles.text]}>Measurements made</Text>
 
         <View style={styles.inLine}>
-            <Text style={[{flex: 1}, styles.text]} >
-              {"Time"}
+          <TouchableOpacity style={{flex: 1}} onPress={showTimepicker}>
+            <Text style={[styles.text, { alignSelf: "center"}]} >
+              Time
             </Text>
-            <Text style={[{flex: 1}, styles.text]} >
-              {"Date"}
+          </TouchableOpacity>
+          <TouchableOpacity style={{flex: 1}} onPress={showDatepicker}>
+            <Text style={[styles.text, { alignSelf: "center"}]} >
+              Date
             </Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.inLine}>
-            <Text style={[{flex: 1}, styles.text]} onPress={showTimepicker}>
+          <TouchableOpacity style={{flex: 1}} onPress={showTimepicker}>
+            <Text style={[styles.text, {borderWidth:1, borderRadius: 5, alignSelf: "center", padding: 6}]} >
               { date.getHours() + "-"+ date.getMinutes()}
             </Text>
-            <Text style={[{flex: 1}, styles.text]} onPress={showDatepicker}>
+          </TouchableOpacity>
+          <TouchableOpacity style={{flex: 1}} onPress={showDatepicker}>
+            <Text style={[styles.text, {borderWidth:1, borderRadius: 5, alignSelf: "center", padding: 6}]} >
               {date.getDate() + "-"+ date.getMonth() + "-"+ date.getFullYear()}
             </Text>
+          </TouchableOpacity>
         </View>
 
         {show && (

@@ -29,14 +29,14 @@ export default function ViewPatient({ navigation, route })  {
       .finally(() => setLoading(false));
   }
   
+
+  
   useEffect(() => {
       const unsubscribe = navigation.addListener('focus', () => {
           getVitals()
           console.log("reloaded");
       });
   }, []);
-
- 
 
   React.useLayoutEffect(()=>{
     navigation.setOptions({
@@ -50,52 +50,67 @@ export default function ViewPatient({ navigation, route })  {
 
   return (
     <View style={styles.container}>
+      <View style={styles.inLine}>
+          <Text style={styles.firstColumn}>Room</Text>
+          <Text style={styles.secondColumn}>{patient.room}</Text>
+      </View>
+
+      <View style={styles.inLine}>
+          <Text style={styles.firstColumn}>Phone number</Text>
+          <Text style={styles.secondColumn}>{patient.phone_number}</Text>
+      </View>
+
+      <View style={styles.inLine}>
+        <Text style={styles.firstColumn}>Address</Text>
+      </View>
+      <View style={{maxHeight: 120}}>
         <ScrollView nestedScrollEnabled = {true}>
-            <View style={styles.inLine}>
-                <Text style={styles.firstColumn}>Room</Text>
-                <Text style={styles.secondColumn}>{patient.room}</Text>
-            </View>
+          <Text style={{paddingHorizontal: 10,
+                        fontSize: 18,
+                        fontFamily: "serif",
+                        textAlignVertical: 'top'}}
+          >
+            {patient.address}
+          </Text>
+        </ScrollView>
+      </View>
 
-            <View style={styles.inLine}>
-                <Text style={styles.firstColumn}>Phone number</Text>
-                <Text style={styles.secondColumn}>{patient.phone_number}</Text>
-            </View>
+      <View style={styles.inLine}>
+        <Text style={styles.firstColumn}>Notes</Text>
+      </View>
+      <View style={{maxHeight: 90, 
+                    borderWidth: 1, 
+                    borderColor: "#0005"}}
+      >
+        <ScrollView nestedScrollEnabled = {true}>
+          <Text style={{paddingHorizontal: 10, 
+                        fontSize: 18, 
+                        textAlignVertical: 'top',
+                        fontFamily: "serif"}}
+          >
+            {patient.notes}
+          </Text>
+        </ScrollView>
+      </View>
 
-            <View style={styles.inLine}>
-              <Text style={styles.firstColumn}>Address</Text>
-            </View>
-            <View style={{maxHeight: 120}}>
-              <ScrollView nestedScrollEnabled = {true}>
-                <Text style={{paddingHorizontal: 10, fontSize: 18, fontFamily: "serif", textAlignVertical: 'top'}}>{patient.address}</Text>
-              </ScrollView>
-            </View>
+      <TouchableOpacity
+        style={[styles.button, styles.leftHalf]}
+        onPress={() => navigation.navigate("AddVitals", { patient: patient, vital: '' })}
+        >
+          <Text style={styles.buttonText}>Add Vitals</Text>
 
-            <View style={styles.inLine}>
-              <Text style={styles.firstColumn}>Notes</Text>
-            </View>
-            <View style={{maxHeight: 90, borderWidth: 1, borderColor: "#0005"}}>
-              <ScrollView nestedScrollEnabled = {true}>
-                <Text style={{paddingHorizontal: 10, fontSize: 18, textAlignVertical: 'top', fontFamily: "serif"}}>{patient.notes}</Text>
-              </ScrollView>
-            </View>
+      </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.button, styles.leftHalf]}
-              onPress={() => navigation.navigate("AddVitals", { patient: patient, vital: '' })}
-              >
-                <Text style={styles.buttonText}>Add Vitals</Text>
-
-            </TouchableOpacity>
-
-            <View style={{height:180}}>
-              {isLoading ? <ActivityIndicator/> : (
-                  <FlatList nestedScrollEnabled = {true} style={{borderWidth: 1, borderColor: "#0005"}}
-                    data={VitalsList}
-                    renderItem={({ item }) => (<ListItem item={item} navigation={navigation} patient={patient} />)}
-                  />
-              )}
-            </View>
-        </ScrollView >
+      <ScrollView nestedScrollEnabled = {true}>
+        <View styles = {{ alignItems: "stretch" }}>
+          {isLoading|| VitalsList.length==0  ? <ActivityIndicator/> : (
+              <FlatList  style={{borderWidth: 1, borderColor: "#0005"}}
+                data={VitalsList.reverse()}
+                renderItem={({ item }) => (<ListItem item={item} navigation={navigation} patient={patient} />)}
+              />
+          )}
+        </View>
+      </ScrollView >
 
         <View style={styles.bottom}>
           <TouchableOpacity style={[styles.button, styles.leftHalf, {}]}
@@ -113,7 +128,6 @@ const styles = StyleSheet.create(
     container:{
       flex:1,
       paddingHorizontal: 22,
-
     },
     inLine: {
       flexDirection:'row',
@@ -152,7 +166,7 @@ const styles = StyleSheet.create(
       fontSize: 22,
     },
     bottom: {
-      justifyContent: 'flex-end'
+      justifyContent: 'flex-end',
     },
   }
 );
@@ -177,20 +191,21 @@ function ListItem(props){
           }
           </Text>
       </View>
-      <View style={{ marginBottom:10, padding:5}}>
-      {checkVital(props.item.bloodPresure, "Blood Presure")}
-      {checkVital(props.item.respiratoryRate, "Respiratory Rate")}
-      {checkVital(props.item.bloodOxigen, "Blood Oxigen")}
-      {checkVital(props.item.hearthRate, "Hearth Rate")}
+      <View style={{marginStart: 20, marginBottom:10, padding:5}}>
+        {checkVital(props.item.bloodPresure, "Blood Presure")}
+        {checkVital(props.item.respiratoryRate, "Respiratory Rate")}
+        {checkVital(props.item.bloodOxigen, "Blood Oxigen")}
+        {checkVital(props.item.hearthRate, "Hearth Rate")}
       </View>
-
-      <View style={{ marginBottom:10, padding:5, flex:1}}>
-      {checkVital(props.item.bloodPresure, props.item.bloodPresure)}
-      {checkVital(props.item.respiratoryRate, props.item.respiratoryRate)}
-      {checkVital(props.item.bloodOxigen, props.item.bloodOxigen)}
-      {checkVital(props.item.hearthRate, props.item.hearthRate)}
+      <View style={{flex: 1, alignItems: "flex-end"}}>
+        <View style={{ marginBottom:10, padding:5, flex: 1, alignItems: "flex-end"}}>
+          {checkVital(props.item.bloodPresure, props.item.bloodPresure)}
+          {checkVital(props.item.respiratoryRate, props.item.respiratoryRate)}
+          {checkVital(props.item.bloodOxigen, props.item.bloodOxigen)}
+          {checkVital(props.item.hearthRate, props.item.hearthRate)}
+        </View>
       </View>
-
+      
     </TouchableOpacity>
   );
 }
@@ -203,6 +218,7 @@ const list = StyleSheet.create(
       borderColor: "#0005",
     },
     text: {
+      fontSize:20,
       fontFamily: "serif",
     },
   }

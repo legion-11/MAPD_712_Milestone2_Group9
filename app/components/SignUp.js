@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
+import Toast from 'react-native-simple-toast';
 
 var url = "http://127.0.0.1:3009"
 
@@ -22,8 +23,6 @@ export default function SignUp({navigation})  {
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
   const [email, setEmail] = useState('');
-
-  const [errorText, setErrorText] = useState();
 
   return (
 
@@ -49,20 +48,19 @@ export default function SignUp({navigation})  {
           onChangeText= {text => setEmail(text)}
         />
 
-        {errorText}
 
         <TouchableOpacity
           style={styles.button}
           onPress={() =>
             {
               if (username.length < 4) {
-                setErrorText(<Text style={styles.errortext}>username should be at least 4 char long</Text>);
+                Toast.show("username should be at least 4 char long", Toast.LONG)
               } else if (password!=undefined && password.length < 6) {
-                setErrorText(<Text style={styles.errortext}>password should be at least 6 char long</Text>);
+                Toast.show("password should be at least 6 char long", Toast.LONG)
               } else if (password!=undefined && password!=password2) {
-                setErrorText(<Text style={styles.errortext}>passwords are different</Text>);
+                Toast.show("passwords are different", Toast.LONG)
               } else if (checkemail(email)) {
-                setErrorText(<Text style={styles.errortext}>email error</Text>)
+                Toast.show("email error", Toast.LONG)
               } else {
                 fetch(url + `/users`, {
                   method: "POST",
@@ -78,11 +76,10 @@ export default function SignUp({navigation})  {
                 })
                 .then((response) => response.json())
                 .then((json)=> {
-                  setErrorText(undefined)
                     navigation.navigate( "SignIn")
                 })
                 .catch(() => {
-                  setErrorText(<Text style={styles.errortext}>{error.message}</Text>)
+                  Toast.show(error.message, Toast.LONG)
                 })
               }
             }

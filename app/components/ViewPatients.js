@@ -9,7 +9,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-
+import Toast from 'react-native-simple-toast';
 
 var url = "http://127.0.0.1:3009"
 
@@ -22,7 +22,7 @@ export default function ViewPatients({ navigation, route })  {
     fetch(url + `/patients`)
       .then((response) => response.json())
       .then((json)=>setPatientsList(json))
-      .catch((error) => console.error(error))
+      .catch((error) => Toast.show(error.message, Toast.LONG))
       .finally(() => setLoading(false));
   }
 

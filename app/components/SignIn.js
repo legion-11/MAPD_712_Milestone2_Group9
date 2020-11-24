@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
+import Toast from 'react-native-simple-toast';
 
 var url = "http://127.0.0.1:3009"
 // use sha-256 and send data on server?
@@ -14,8 +15,7 @@ var url = "http://127.0.0.1:3009"
 export default function SignIn({navigation})  {
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
-  const [result, setResult] = useState();
-  const [err, setErr] = useState();
+  
   return (
     <View style={styles.container}>
         <Text style={styles.text}>
@@ -41,18 +41,16 @@ export default function SignIn({navigation})  {
               .then((json)=>{
                 console.log("signin user with id", json.user_id)
                 if (json.validated=="true") {
-                  setErr(undefined)
                   navigation.navigate('ViewPatients', {user_id: json.user_id});
                 } 
-                else{ setErr(<Text style={styles.errText} >user do not exist</Text>) }
+                else{ Toast.show("user do not exist", Toast.LONG) }
                 })
-              .catch((error) => setErr(<Text style={styles.errText} >{String(error.message)}</Text>))
+              .catch((error) => Toast.show(error.message, Toast.LONG))
           }}
           >
             <Text style={styles.buttonText}>Press Here</Text>
         </TouchableOpacity>
 
-        {err}
 
         <View style={styles.inLine}>
             <Text style={styles.hyperlink} onPress={() => {

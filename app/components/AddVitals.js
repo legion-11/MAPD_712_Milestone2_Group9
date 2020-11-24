@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Toast from 'react-native-simple-toast';
 
 
 var url = "http://127.0.0.1:3009"
@@ -121,11 +122,10 @@ export default function AddVitals({ navigation, route })  {
       <View style={styles.bottom}>
         <TouchableOpacity
           style={[styles.button]}
-          onPress={() => // TODO: save vitals
+          onPress={() => 
           {
-
             if (bloodPresure.length==0 && respiratoryRate.length==0&&bloodOxigen.length==0&&hearthRate.length==0) {
-              console.log('error');
+              Toast.show("no data", Toast.LONG)
             }else {
               let vital_id = (vital._id != undefined) ? `/${vital._id}` : ''
               let method = (vital._id != undefined) ? `PUT` : 'POST'
@@ -145,11 +145,8 @@ export default function AddVitals({ navigation, route })  {
               })
               .then((response) => response.json())
               .then((json)=> {new_vital = json})
-              .catch((error) => console.error(error))
-              .then( () => {
-                navigation.navigate( "ViewVitals", { vital: new_vital, patient: route.params.patient} )
-                }
-              );
+              .then( () => {navigation.navigate( "ViewVitals", { vital: new_vital, patient: route.params.patient} ) })
+              .catch((error) => Toast.show(error.message, Toast.LONG))
             }
           }}
         >

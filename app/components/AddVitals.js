@@ -16,6 +16,8 @@ var url = 'http://127.0.0.1:3009';
 export default function AddVitals({navigation, route}) {
   var vital = route.params.vital;
 
+  let errorMessage = '';
+
   //hooks for vitals info
   const [bloodPresure, setBloodPresure] = useState(vital.bloodPresure || '');
   const [respiratoryRate, setRespiratoryRate] = useState(
@@ -55,7 +57,9 @@ export default function AddVitals({navigation, route}) {
       bloodOxigen.length === 0 &&
       hearthRate.length === 0
     ) {
-      Toast.show('no data', Toast.LONG);
+      errorMessage = 'no data';
+      console.log(errorMessage);
+      Toast.show(errorMessage, Toast.LONG);
     } else {
       let vital_id = vital._id !== undefined ? `/${vital._id}` : '';
       let method = vital._id !== undefined ? 'PUT' : 'POST';
@@ -76,12 +80,17 @@ export default function AddVitals({navigation, route}) {
       })
         .then((response) => response.json())
         .then((json) => {
+          errorMessage = 'all good';
           navigation.navigate('ViewVitals', {
             vital: json,
             patient: route.params.patient,
           });
         })
-        .catch((error) => Toast.show(error.message, Toast.LONG));
+        .catch((error) => {
+          errorMessage = error.message;
+          console.log(errorMessage);
+          Toast.show(errorMessage, Toast.LONG);
+        });
     }
   };
 

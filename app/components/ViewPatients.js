@@ -6,12 +6,14 @@ import {
   View,
   Text,
   Image,
+  Animated,
   TouchableOpacity,
 } from 'react-native';
 import Toast from 'react-native-simple-toast';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 var url = 'http://127.0.0.1:3009';
-
+let errorMessage = '';
 export default function ViewPatients({navigation, route}) {
   const [isLoading, setLoading] = useState(true);
   const [patientsList, setPatientsList] = useState([]);
@@ -21,7 +23,10 @@ export default function ViewPatients({navigation, route}) {
     console.log('loading all patients');
     fetch(url + '/patients')
       .then((response) => response.json())
-      .then((json) => setPatientsList(json))
+      .then((json) => {
+        setPatientsList([]);
+        setPatientsList(json);
+      })
       .catch((error) => Toast.show(error.message, Toast.LONG))
       .finally(() => setLoading(false));
   };
@@ -49,6 +54,29 @@ export default function ViewPatients({navigation, route}) {
     });
   });
 
+  const deleteItem = (item) => {
+    console.log('delete ' + item._id);
+
+    fetch(url + `/patients/${item._id}`, {
+      method: 'DELETE',
+    })
+      .then(() => loadData())
+      .catch((error) => {
+        errorMessage = error.message;
+        Toast.show(errorMessage, Toast.LONG);
+      });
+  };
+
+  function sorter(a, b) {
+    let aname = a.name.toLowerCase();
+    let bname = b.name.toLowerCase();
+
+    if (a.in_critical_condition === b.in_critical_condition) {
+      return aname < bname ? -1 : aname > bname ? 1 : 0;
+    } else {
+      return a.in_critical_condition ? -1 : 1;
+    }
+  }
   return (
     <View style={styles.container}>
       <View style={{flexDirection: 'row'}}>
@@ -61,23 +89,17 @@ export default function ViewPatients({navigation, route}) {
         <ActivityIndicator />
       ) : (
         <FlatList
-          data={patientsList.sort(function (a, b) {
-            let aname = a.name.toLowerCase();
-            let bname = b.name.toLowerCase();
-
-            if (a.in_critical_condition === b.in_critical_condition) {
-              return aname < bname ? -1 : aname > bname ? 1 : 0;
-            } else {
-              return a.in_critical_condition ? -1 : 1;
-            }
-          })}
-          renderItem={({item}) => (
-            <ListItem
-              item={item}
-              navigation={navigation}
-              user_id={route.params.user_id}
-            />
-          )}
+          data={patientsList.sort((a, b) => sorter(a, b))}
+          renderItem={({item}) => {
+            return (
+              <ListItem
+                item={item}
+                navigation={navigation}
+                user_id={route.params.user_id}
+                handleDelete={() => deleteItem(item)}
+              />
+            );
+          }}
         />
       )}
     </View>
@@ -88,6 +110,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: '#EEEEEE',
   },
   firstColumn: {
     flex: 2,
@@ -120,6 +143,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: 24,
   },
+  seperatorLine: {
+    height: 1,
+    backgroundColor: 'black',
+  },
 });
 // Each item of the list is photo, full name, and status picture that redirect to patient's screen
 function ListItem(props) {
@@ -145,27 +172,50 @@ function ListItem(props) {
     />
   );
 
+  const leftSwipe = (progress, dragX) => {
+    const scale = dragX.interpolate({
+      inputRange: [0, 100],
+      outputRange: [0, 1],
+      extrapolate: 'clamp',
+    });
+    return (
+      <TouchableOpacity onPress={props.handleDelete} activeOpacity={0.6}>
+        <View style={listStyles.deleteBox}>
+          <Animated.Text style={{transform: [{scale: scale}]}}>
+            Delete
+          </Animated.Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
-    <TouchableOpacity
-      key={props.item.id}
-      style={listStyles.container}
-      onPress={() =>
-        props.navigation.navigate('ViewPatient', {
-          patient: props.item,
-          user_id: props.user_id,
-        })
-      }>
-      {image}
-      <Text style={listStyles.text}>{props.item.name}</Text>
-      {critical}
-    </TouchableOpacity>
+    <Swipeable renderLeftActions={leftSwipe}>
+      <View>
+        <TouchableOpacity
+          key={props.item.id}
+          style={listStyles.container}
+          onPress={() =>
+            props.navigation.navigate('ViewPatient', {
+              patient: props.item,
+              user_id: props.user_id,
+            })
+          }>
+          {image}
+          <Text style={listStyles.text}>{props.item.name}</Text>
+          {critical}
+        </TouchableOpacity>
+      </View>
+    </Swipeable>
   );
 }
 const listStyles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: 'row',
     borderBottomWidth: 1,
+    height: 80,
+    backgroundColor: '#EEEEEE',
+    paddingBottom: 2,
   },
   image: {
     flex: 2,
@@ -181,5 +231,13 @@ const listStyles = StyleSheet.create({
     padding: 5,
     fontSize: 20,
     flex: 10,
+  },
+  deleteBox: {
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 100,
+    height: 80,
+    borderRadius: 5,
   },
 });

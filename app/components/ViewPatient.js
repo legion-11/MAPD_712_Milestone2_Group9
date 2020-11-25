@@ -5,13 +5,15 @@ import {
   ScrollView,
   FlatList,
   StyleSheet,
+  BackHandler,
   View,
   Text,
   Image,
   TouchableOpacity,
 } from 'react-native';
-
+import {HeaderBackButton} from '@react-navigation/stack';
 var url = 'http://127.0.0.1:3009';
+
 // provide information about patient, and his vitals
 export default function ViewPatient({navigation, route}) {
   const [isLoading, setLoading] = useState(true);
@@ -31,9 +33,23 @@ export default function ViewPatient({navigation, route}) {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       getVitals();
-      console.log('reloaded');
+      console.log('reload vitals');
     });
-  });
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate('ViewPatients');
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({

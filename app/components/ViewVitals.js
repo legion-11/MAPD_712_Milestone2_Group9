@@ -3,8 +3,8 @@ import {HeaderBackButton} from '@react-navigation/stack';
 import {
   StyleSheet,
   ScrollView,
-  BackHandler,
   View,
+  BackHandler,
   Text,
   TouchableOpacity,
 } from 'react-native';
@@ -33,15 +33,17 @@ export default function ViewVitals({navigation, route}) {
   });
 
   useEffect(() => {
+    const backAction = () => {
+      navigation.navigate('ViewPatient', {patient: route.params.patient})
+      return true;
+    };
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      () => {
-        navigation.navigate('ViewPatient', {patient: route.params.patient});
-      },
+      backAction,
     );
-    return () =>
-      navigation.navigate('ViewPatient', {patient: route.params.patient});
-  }, [navigation, route.params.patient]);
+
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <View style={styles.container}>

@@ -15,6 +15,29 @@ export default function SignIn({navigation}) {
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
 
+  var errorMessage = '';
+
+  const chackInputAndSignIn = () => {
+    fetch(url + `/users/${username}/${password}`)
+      .then((response) => response.json())
+      .then((json) => {
+        if (json.validated === 'true') {
+          errorMessage = 'good';
+          console.log(errorMessage);
+          navigation.navigate('ViewPatients', {user_id: json.user_id});
+        } else {
+          errorMessage = 'user do not exist';
+          console.log(errorMessage);
+          Toast.show('user do not exist', Toast.LONG);
+        }
+      })
+      .catch((error) => {
+        errorMessage = error.message;
+        console.log(errorMessage);
+        Toast.show(errorMessage, Toast.LONG);
+      });
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Sign In</Text>
@@ -34,19 +57,7 @@ export default function SignIn({navigation}) {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => {
-          fetch(url + `/users/${username}/${password}`)
-            .then((response) => response.json())
-            .then((json) => {
-              console.log('signin user with id', json.user_id);
-              if (json.validated === 'true') {
-                navigation.navigate('ViewPatients', {user_id: json.user_id});
-              } else {
-                Toast.show('user do not exist', Toast.LONG);
-              }
-            })
-            .catch((error) => Toast.show(error.message, Toast.LONG));
-        }}>
+        onPress={() => chackInputAndSignIn}>
         <Text style={styles.buttonText}>Press Here</Text>
       </TouchableOpacity>
 

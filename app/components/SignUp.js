@@ -24,6 +24,51 @@ export default function SignUp({navigation}) {
   const [password2, setPassword2] = useState('');
   const [email, setEmail] = useState('');
 
+  var errorMessage = '';
+
+  const sendInfoOnServer = () => {
+    if (username.length < 4) {
+      errorMessage = 'username should be at least 4 char long';
+      console.log(errorMessage);
+      Toast.show('username should be at least 4 char long', Toast.LONG);
+    } else if (password !== undefined && password.length < 6) {
+      errorMessage = 'password should be at least 6 char long';
+      console.log(errorMessage);
+      Toast.show('password should be at least 6 char long', Toast.LONG);
+    } else if (password !== undefined && password !== password2) {
+      errorMessage = 'passwords are different';
+      console.log(errorMessage);
+      Toast.show('passwords are different', Toast.LONG);
+    } else if (checkemail(email)) {
+      errorMessage = 'email error';
+      console.log(errorMessage);
+      Toast.show('email error', Toast.LONG);
+    } else {
+      fetch(url + '/users', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+          email: email,
+        }),
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          errorMessage = 'all good';
+          navigation.navigate('ViewPatients', {user_id: json._id});
+        })
+        .catch((error) => {
+          errorMessage = error.message;
+          console.log(error.message);
+          Toast.show(error.message, Toast.LONG);
+        });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Sign Up</Text>
@@ -53,37 +98,7 @@ export default function SignUp({navigation}) {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => {
-          if (username.length < 4) {
-            Toast.show('username should be at least 4 char long', Toast.LONG);
-          } else if (password !== undefined && password.length < 6) {
-            Toast.show('password should be at least 6 char long', Toast.LONG);
-          } else if (password !== undefined && password !== password2) {
-            Toast.show('passwords are different', Toast.LONG);
-          } else if (checkemail(email)) {
-            Toast.show('email error', Toast.LONG);
-          } else {
-            fetch(url + '/users', {
-              method: 'POST',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                username: username,
-                password: password,
-                email: email,
-              }),
-            })
-              .then((response) => response.json())
-              .then((json) => {
-                navigation.navigate('SignIn');
-              })
-              .catch((error) => {
-                Toast.show(error.message, Toast.LONG);
-              });
-          }
-        }}>
+        onPress={() => sendInfoOnServer()}>
         <Text style={styles.buttonText}>Continue</Text>
       </TouchableOpacity>
     </View>

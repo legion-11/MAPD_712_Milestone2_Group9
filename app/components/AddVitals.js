@@ -48,6 +48,43 @@ export default function AddVitals({navigation, route}) {
     showMode('time');
   };
 
+  const createVitals = () => {
+    if (
+      bloodPresure.length === 0 &&
+      respiratoryRate.length === 0 &&
+      bloodOxigen.length === 0 &&
+      hearthRate.length === 0
+    ) {
+      Toast.show('no data', Toast.LONG);
+    } else {
+      let vital_id = vital._id !== undefined ? `/${vital._id}` : '';
+      let method = vital._id !== undefined ? 'PUT' : 'POST';
+      let new_vital = {
+        bloodPresure: bloodPresure,
+        respiratoryRate: respiratoryRate,
+        bloodOxigen: bloodOxigen,
+        hearthRate: hearthRate,
+        date: date,
+      };
+      fetch(url + `/patients/${route.params.patient._id}/records${vital_id}`, {
+        method: method,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(new_vital),
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          navigation.navigate('ViewVitals', {
+            vital: json,
+            patient: route.params.patient,
+          });
+        })
+        .catch((error) => Toast.show(error.message, Toast.LONG));
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView nestedScrollEnabled={true}>
@@ -66,30 +103,12 @@ export default function AddVitals({navigation, route}) {
 
         <View style={styles.inLine}>
           <TouchableOpacity style={{flex: 1}} onPress={showTimepicker}>
-            <Text
-              style={[
-                styles.text,
-                {
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  alignSelf: 'center',
-                  padding: 6,
-                },
-              ]}>
+            <Text style={[styles.text, styles.textDateTime]}>
               {date.getHours() + '-' + date.getMinutes()}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={{flex: 1}} onPress={showDatepicker}>
-            <Text
-              style={[
-                styles.text,
-                {
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  alignSelf: 'center',
-                  padding: 6,
-                },
-              ]}>
+            <Text style={[styles.text, styles.textDateTime]}>
               {date.getDate() +
                 '-' +
                 date.getMonth() +
@@ -147,49 +166,7 @@ export default function AddVitals({navigation, route}) {
       <View style={styles.bottom}>
         <TouchableOpacity
           style={[styles.button]}
-          onPress={() => {
-            if (
-              bloodPresure.length === 0 &&
-              respiratoryRate.length === 0 &&
-              bloodOxigen.length === 0 &&
-              hearthRate.length === 0
-            ) {
-              Toast.show('no data', Toast.LONG);
-            } else {
-              let vital_id = vital._id !== undefined ? `/${vital._id}` : '';
-              let method = vital._id !== undefined ? 'PUT' : 'POST';
-              let new_vital = {
-                bloodPresure: bloodPresure,
-                respiratoryRate: respiratoryRate,
-                bloodOxigen: bloodOxigen,
-                hearthRate: hearthRate,
-                date: date,
-              };
-              fetch(
-                url +
-                  `/patients/${route.params.patient._id}/records${vital_id}`,
-                {
-                  method: method,
-                  headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(new_vital),
-                },
-              )
-                .then((response) => response.json())
-                .then((json) => {
-                  new_vital = json;
-                })
-                .then(() => {
-                  navigation.navigate('ViewVitals', {
-                    vital: new_vital,
-                    patient: route.params.patient,
-                  });
-                })
-                .catch((error) => Toast.show(error.message, Toast.LONG));
-            }
-          }}>
+          onPress={() => createVitals()}>
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
       </View>
@@ -234,5 +211,11 @@ const styles = StyleSheet.create({
     borderColor: '#0005',
     borderRadius: 10,
     borderWidth: 1,
+  },
+  textDateTime: {
+    borderWidth: 1,
+    borderRadius: 5,
+    alignSelf: 'center',
+    padding: 6,
   },
 });

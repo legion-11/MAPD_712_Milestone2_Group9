@@ -31,44 +31,35 @@ export default function AddPatient({navigation, route}) {
     patient.in_critical_condition || false,
   );
 
-  function save(
-    navigation,
-    name,
-    room,
-    address,
-    notes,
-    phone_number,
-    _id,
-    user_id,
-    state,
-  ) {
+  function save() {
     // TODO: normal check
-    if (name.length === 0) return;
-    let url_id = _id !== undefined ? `/${_id}` : '';
-    let method = _id !== undefined ? 'PUT' : 'POST';
-    let patient = {
+    if (name.length === 0) {
+      return;
+    }
+    let url_id = patient._id !== undefined ? `/${patient._id}` : '';
+    let method = patient._id !== undefined ? 'PUT' : 'POST';
+
+    let newPatient = {
       name: name,
       room: room,
       address: address,
       notes: notes,
       phone_number: phone_number,
-      user_id: user_id,
-      in_critical_condition: state,
+      user_id: route.params.user_id,
+      in_critical_condition: in_critical_condition,
     };
+
     fetch(url + `/patients${url_id}`, {
       method: method,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(patient),
+      body: JSON.stringify(newPatient),
     })
       .then((response) => response.json())
       .then((json) => {
-        patient = json;
-      })
-      .then(() => {
-        navigation.navigate('ViewPatient', {patient: patient});
+        navigation.navigate('ViewPatient', {patient: json});
       })
       .catch((error) => Toast.show(error.message, Toast.LONG));
   }
@@ -138,21 +129,7 @@ export default function AddPatient({navigation, route}) {
         />
       </ScrollView>
 
-      <TouchableOpacity
-        style={[styles.button]}
-        onPress={() =>
-          save(
-            navigation,
-            name,
-            room,
-            address,
-            notes,
-            phone_number,
-            patient._id,
-            route.params.user_id,
-            in_critical_condition,
-          )
-        }>
+      <TouchableOpacity style={[styles.button]} onPress={() => save()}>
         <Text style={styles.buttonText}>Save</Text>
       </TouchableOpacity>
     </View>

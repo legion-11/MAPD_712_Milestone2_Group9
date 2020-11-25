@@ -18,6 +18,7 @@ export default function ViewPatients({navigation, route}) {
   console.log('view all patients');
   // load list of patients
   const loadData = () => {
+    console.log('loading all patients');
     fetch(url + '/patients')
       .then((response) => response.json())
       .then((json) => setPatientsList(json))
@@ -26,11 +27,10 @@ export default function ViewPatients({navigation, route}) {
   };
 
   useEffect(() => {
-    // TODO: change to oue domain
-    const unsubscribe = navigation.addListener('focus', () => {
+    const listener = navigation.addListener('focus', () => {
       loadData();
     });
-  }, [navigation]);
+  }, []);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({

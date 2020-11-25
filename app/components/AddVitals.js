@@ -4,6 +4,7 @@ import {
   StyleSheet,
   View,
   Text,
+  Image,
   TextInput,
   TouchableOpacity,
   Platform,
@@ -11,7 +12,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-simple-toast';
 
-var url = 'http://127.0.0.1:3009';
+var url = 'https://patientrecordsgroup.herokuapp.com';
 // screen for adding and editing vital
 export default function AddVitals({navigation, route}) {
   var vital = route.params.vital;
@@ -93,6 +94,36 @@ export default function AddVitals({navigation, route}) {
         });
     }
   };
+
+  const deleteVital = () => {
+    if (vital._id !== undefined){
+      fetch(
+        url + `/patients/${route.params.patient._id}/records/${vital._id}`,
+        {
+        method: 'DELETE',
+      })
+      .catch((error) => {
+        errorMessage = error.message;
+        Toast.show(errorMessage, Toast.LONG);
+      });
+    }
+    navigation.navigate('ViewPatient', {patient: route.params.patient})
+  }
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          style={{alignSelf: 'flex-end'}}
+          onPress={() => deleteVital()}>
+          <Image
+            source={require('../assets/trash-bin.png')}
+            style={styles.image}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  });
 
   return (
     <View style={styles.container}>
@@ -187,6 +218,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 22,
+  },
+  image: {
+    resizeMode: 'center',
+    paddingVertical: 5,
+    height: 50,
+    width: 50,
+    margin: 10,
   },
   button: {
     backgroundColor: 'crimson',

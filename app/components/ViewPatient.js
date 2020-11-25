@@ -11,7 +11,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-var url = 'http://127.0.0.1:3009';
+var url = 'https://patientrecordsgroup.herokuapp.com';
 
 // provide information about patient, and his vitals
 export default function ViewPatient({navigation, route}) {

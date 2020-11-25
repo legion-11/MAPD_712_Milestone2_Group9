@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Toast from 'react-native-simple-toast';
 
-var url = 'http://127.0.0.1:3009';
+var url = 'https://patientrecordsgroup.herokuapp.com';
 
 // screen for adding and editing patient
 export default function AddPatient({navigation, route}) {

@@ -12,7 +12,7 @@ import {
 import Toast from 'react-native-simple-toast';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
-var url = 'http://127.0.0.1:3009';
+var url = 'https://patientrecordsgroup.herokuapp.com';
 let errorMessage = '';
 export default function ViewPatients({navigation, route}) {
   const [isLoading, setLoading] = useState(true);

@@ -57,7 +57,7 @@ export default function SignIn({navigation}) {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => chackInputAndSignIn}>
+        onPress={() => chackInputAndSignIn()}>
         <Text style={styles.buttonText}>Press Here</Text>
       </TouchableOpacity>
 

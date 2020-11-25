@@ -25,7 +25,7 @@ export default function ViewPatients({navigation, route}) {
       .then((response) => response.json())
       .then((json) => {
         setPatientsList([]);
-        setPatientsList(json);
+        setPatientsList(json.sort((a, b) => sorter(a, b)));
       })
       .catch((error) => Toast.show(error.message, Toast.LONG))
       .finally(() => setLoading(false));
@@ -54,13 +54,18 @@ export default function ViewPatients({navigation, route}) {
     });
   });
 
-  const deleteItem = (item) => {
+  const deleteItem = (item, index) => {
     console.log('delete ' + item._id);
-
+    
     fetch(url + `/patients/${item._id}`, {
       method: 'DELETE',
     })
-      .then(() => loadData())
+      .then(() => {
+        row[index].close();
+        const arr = [...patientsList];
+        arr.splice(index, 1).sort((a, b) => sorter(a, b));
+        setPatientsList(arr);
+      })
       .catch((error) => {
         errorMessage = error.message;
         Toast.show(errorMessage, Toast.LONG);
@@ -77,6 +82,7 @@ export default function ViewPatients({navigation, route}) {
       return a.in_critical_condition ? -1 : 1;
     }
   }
+
   return (
     <View style={styles.container}>
       <View style={{flexDirection: 'row'}}>
@@ -89,14 +95,15 @@ export default function ViewPatients({navigation, route}) {
         <ActivityIndicator />
       ) : (
         <FlatList
-          data={patientsList.sort((a, b) => sorter(a, b))}
-          renderItem={({item}) => {
+          data={patientsList}
+          renderItem={({item, index}) => {
             return (
               <ListItem
                 item={item}
+                index={index}
                 navigation={navigation}
                 user_id={route.params.user_id}
-                handleDelete={() => deleteItem(item)}
+                handleDelete={() => deleteItem(item, index)}
               />
             );
           }}
@@ -148,6 +155,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
 });
+
+let row: Array<any> = [];
 // Each item of the list is photo, full name, and status picture that redirect to patient's screen
 function ListItem(props) {
   let image, critical;
@@ -190,22 +199,21 @@ function ListItem(props) {
   };
 
   return (
-    <Swipeable renderLeftActions={leftSwipe}>
-      <View>
-        <TouchableOpacity
-          key={props.item.id}
-          style={listStyles.container}
-          onPress={() =>
-            props.navigation.navigate('ViewPatient', {
-              patient: props.item,
-              user_id: props.user_id,
-            })
-          }>
-          {image}
-          <Text style={listStyles.text}>{props.item.name}</Text>
-          {critical}
-        </TouchableOpacity>
-      </View>
+    <Swipeable renderLeftActions={leftSwipe}
+      ref={(ref) => (row[props.index] = ref)}>
+      <TouchableOpacity
+        key={props.item.id}
+        style={listStyles.container}
+        onPress={() =>
+          props.navigation.navigate('ViewPatient', {
+            patient: props.item,
+            user_id: props.user_id,
+          })
+        }>
+        {image}
+        <Text style={listStyles.text}>{props.item.name}</Text>
+        {critical}
+      </TouchableOpacity>
     </Swipeable>
   );
 }
